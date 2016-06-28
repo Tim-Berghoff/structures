@@ -6,9 +6,9 @@ struct list * new_list(void)
 	return new_list;
 }
 
-unsigned int list_add(unsigned int fl, struct list * list, void * value)
+size_t list_add(size_t fl, struct list * list, void * value)
 {
-	struct list_node * new_node = calloc(1, sizeof( *new_node ));
+	register struct list_node * new_node = calloc(1, sizeof( *new_node ));
 	if(NULL == new_node)
 	{
 		return 0;
@@ -20,30 +20,30 @@ unsigned int list_add(unsigned int fl, struct list * list, void * value)
 	}
 	else
 	{
-		struct list_node * old_node = list->fl[fl];
+		register struct list_node * old_node = list->fl[fl];
 		new_node->np[fl] = old_node;
-		list->fl[fl] = new_node;
 		old_node->np[!fl] = new_node;
+		list->fl[fl] = new_node;
 	}
 
 	return 1;
 }
 
-void * list_get(unsigned int fl, struct list * list)
+void * list_get(size_t fl, struct list * list)
 {
-	struct list_node * node = list->fl[fl];
+	register struct list_node * node = list->fl[fl];
 	return ( NULL != node ) ? node->value : NULL;
 }
 
-void * list_rem(unsigned int fl, struct list * list)
+void * list_rem(size_t fl, struct list * list)
 {
-	struct list_node * rem_node = list->fl[fl];
+	register struct list_node * rem_node = list->fl[fl];
 	if(NULL == rem_node)
 	{
 		return NULL;
 	}
-	void * ret = rem_node->value;
-	struct list_node * new = rem_node->np[fl];
+	register void * ret = rem_node->value;
+	register struct list_node * new = rem_node->np[fl];
 	list->fl[fl] = new;
 	if(0 == --list->size)
 	{
@@ -57,12 +57,12 @@ void * list_rem(unsigned int fl, struct list * list)
 	return ret;
 }
 
-unsigned int list_destruction(unsigned int v, struct list * list)
+size_t list_destruction(size_t v, struct list * list)
 {
-	struct list_node * i, * tmp;
+	register struct list_node * i, * tmp;
 	for(i = list->fl[1]; NULL != i; i=tmp, list->size--)
 	{
-		tmp = i->np[1];
+		tmp = i->np[1]
 		if(v) free(i->value);
 		free(i);
 	}

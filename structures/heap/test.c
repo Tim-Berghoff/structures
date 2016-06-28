@@ -1,31 +1,31 @@
 #include "heap.h"
 #include <string.h>
 
-unsigned int growth_rate(const unsigned size)
+size_t growth_rate(const size_t size)
 {
 	return size << 1;
 }
-unsigned int cmp(const void * a, const void * b)
+size_t cmp(const void * a, const void * b)
 {
-	return *(unsigned int *)a < *(unsigned int *)b;
+	return *(size_t *)a < *(size_t *)b;
 }
-int heap_print(struct heap * heap)
+size_t heap_print(struct heap * heap)
 {
-	for(unsigned int index = 0; index < heap->size; index++)
-		printf("index:%i value:%i size:%i\n", index,
-			*(int *) heap->array[index], (int) heap->size);
+	for(size_t index = 0; index < heap->size; index++)
+		printf("index:%lu value:%lu size:%lu\n", index,
+			*(size_t *) heap->array[index],  heap->size);
 	printf("\n");
 
 	return 0;
 }
 /* checks the heap property */
-unsigned int check(struct heap * heap)
+size_t check(struct heap * heap)
 {
-	unsigned int size = heap->size;
-	unsigned int  err = 0;
-	for(register unsigned int i = 0; i < size; i++) {
-		if(lc(i) < size && *(unsigned int*)heap->array[i] > *(unsigned int*)heap->array[lc(i)]) err++;
-		if(rc(i) < size && *(unsigned int*)heap->array[i] > *(unsigned int*)heap->array[rc(i)]) err++;
+	size_t size = heap->size;
+	size_t  err = 0;
+	for(register size_t i = 0; i < size; i++) {
+		if(lc(i) < size && *(size_t*)heap->array[i] > *(size_t*)heap->array[lc(i)]) err++;
+		if(rc(i) < size && *(size_t*)heap->array[i] > *(size_t*)heap->array[rc(i)]) err++;
 	}
 	return err;
 }
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	}
 	char * file_name = argv[1];
 	char buff[20], command[20];
-	int  val = 0;
+	size_t  val = 0;
 
 	FILE * fp = fopen(file_name, "r");
 	if(NULL == fp)
@@ -51,16 +51,16 @@ int main(int argc, char **argv)
 		heap_vdelete(heap);
 		exit(2);
 	}
-	int i = 0;
-	int err = 0, test_count = 0, remove_count = 0;
-	unsigned long long int average_size = 0;
+	size_t i = 0;
+	size_t err = 0, test_count = 0, remove_count = 0;
+	size_t average_size = 0;
 	void * rem;
 	for( ; NULL != fgets(buff, 20, fp); i++)
 	{
 		average_size += heap->size;
 
 		sscanf(buff, "%s", command);
-		sscanf(buff, "%i", &val);
+		sscanf(buff, "%lu", &val);
 
 			// function call (RM)
 			if(0 == strncmp(command, "RM", 3)) {
@@ -77,12 +77,12 @@ int main(int argc, char **argv)
 				continue;
 			}
 			// heap insert
-			int * n=malloc(sizeof(*n));
+			size_t * n=malloc(sizeof(*n));
 			*n = val;
 			heap_insert(heap, n);
 	}
 	fclose(fp);
-	printf("%i:%i:%i:%llu", err, test_count, remove_count, average_size/(unsigned long long int)i);
+	printf("%lu:%lu:%lu:%lu", err, test_count, remove_count, average_size/i);
 	
 	heap_vdelete(heap);
 	return 0;

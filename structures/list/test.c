@@ -10,12 +10,12 @@ int main(int argc, char **argv)
 	char * file_name = argv[2];
 	int test_count = atoi(argv[1]);
 	struct list * l = new_list();
-	char buff[20], command[20];
-	int * value = NULL, val = 0;
-	list_get_last(l);
+	char buff[30], command[30];
+	size_t * value = NULL, val = 0;
 
-	int * test_return = malloc(test_count * sizeof( * test_return));
-	if(NULL == test_return)
+	char * test_output = calloc(test_count * 30, sizeof( *test_output));
+	char * p = test_output;
+	if(NULL == test_output)
 	{
 		fprintf(stderr, "Could not alloc test return memory\n");
 	}
@@ -25,52 +25,51 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Could not open file\n");
 	}
 	int i = 0;
-	for( ; NULL != fgets(buff, 20, fp) && i < test_count; )
+	size_t a_ret = 0;
+	for( ; NULL != fgets(buff, 30, fp) && i < test_count; value = NULL)
 	{
-		sscanf(buff, "%s %i", command, &val);
+		sscanf(buff, "%s%llu", command, &val);
 
 		if(0 == strcmp("rl", command))
 		{
 			value = list_remove_last(l);
 			if(NULL != value) {
-				test_return[i++] = *value;
+				p += sprintf( p, "rl:%llu\n", *value);
 				free(value);
+			} else {
+				p += sprintf( p, "rl:empty\n");
 			}
 		}
 		else if(0 == strcmp("rf", command))
 		{
 			value = list_remove_first(l);
 			if(NULL != value) {
-				test_return[i++] = *value;
+				p += sprintf( p, "rf:%llu\n", *value);
 				free(value);
+			} else {
+				p += sprintf( p, "rf:empty\n");
 			}
 		}
 		else if(0 == strcmp("al", command))
 		{
-			value = malloc(sizeof( * value));
+			value = calloc(1, sizeof( * value));
 			*value = val;
-			list_add_last(l, value);
+			a_ret = list_add_last(l, value);
+			if(0 == a_ret) fprintf(stderr, "ERROR add first\n"); 
 		}
 		else if(0 == strcmp("af", command))
 		{
-			value = malloc(sizeof( * value));
+			value = calloc(1, sizeof( * value));
 			*value = val;
-			list_add_first(l, value);
+			a_ret = list_add_first(l, value);
+			if(0 == a_ret) fprintf(stderr, "ERROR add last\n"); 
 		}
 	}
-	list_get_first(l);
 	list_vdelete(l);
 	fclose(fp);
 
-	char * test_output = calloc(test_count * 20, sizeof(*test_output));
-	char * p = test_output;
-	for(int j = 0; j < i; j++) {
-		p += sprintf( p, "%i\n", test_return[j]);
-	}
+	printf("%s", test_output);
 
-//	printf("%s", test_output);
-
-	free(test_return);
 	free(test_output);
 
 	return 0;

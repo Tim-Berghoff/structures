@@ -59,7 +59,7 @@ returns NULL on error or if list is empty*/
 
 struct list {
 	struct list_node * fl[2];
-	unsigned int size;
+	size_t size;
 };
 
 struct list_node {
@@ -73,13 +73,13 @@ struct list * new_list(void);
 
 /* add util */
 /* returns 0 on error, 1 on success */
-unsigned int list_add(unsigned int fl, struct list * list, void * value);
+size_t list_add(size_t fl, struct list * list, void * value);
 /* get util */
-void * list_get(unsigned int fl, struct list * list);
+void * list_get(size_t fl, struct list * list);
 /* remove util */
 /* returns value on success and NULL on error or empty list */
-void * list_rem(unsigned int fl, struct list * list);
+void * list_rem(size_t fl, struct list * list);
 /* deletion util */
-unsigned int list_destruction(unsigned int v, struct list * list);
+size_t list_destruction(size_t v, struct list * list);
 
 #endif /* LIST */

@@ -1,14 +1,14 @@
 #include "heap.h"
 
-struct heap * new_heap(unsigned int initial_size,
-	unsigned int (* cmp)(const void * a, const void * b),
-	unsigned int (* growth_rate)(const unsigned int size))
+struct heap * new_heap(size_t initial_size,
+	size_t (* cmp)(const void * a, const void * b),
+	size_t (* growth_rate)(const size_t size))
 {
 	if( NULL == cmp || NULL == growth_rate || 0 == initial_size)
 	{
 		return NULL;
 }
-	struct heap * heap = malloc(sizeof( *heap ));
+	register struct heap * heap = malloc(sizeof( *heap ));
 	if(NULL == heap)
 	{
 		return heap;
@@ -29,9 +29,9 @@ struct heap * new_heap(unsigned int initial_size,
 /* grows the heap according to growth rate
    maybe use static variables in growth_rate
    returns 1 on success and 0 on error */
-static unsigned int heap_grow(struct heap * heap)
+static size_t heap_grow(struct heap * heap)
 {
-	unsigned int max_size = heap->max_size;
+	register size_t max_size = heap->max_size;
 	max_size = max_size * heap->growth_rate(max_size);
 	void ** realloc_ret = realloc((void *) heap->array,
 		max_size * sizeof( *heap->array ));
@@ -44,9 +44,9 @@ static unsigned int heap_grow(struct heap * heap)
 }
 
 /* compares two elements in a save way */
-static __inline unsigned int s_cmp(struct heap * heap, unsigned int a, unsigned int b)
+static __inline size_t s_cmp(struct heap * heap, size_t a, size_t b)
 {
-	unsigned int size = heap->size;
+	size_t size = heap->size;
 	if(a >= size || b >= size)
 	{
 		return 0;
@@ -58,17 +58,17 @@ static __inline unsigned int s_cmp(struct heap * heap, unsigned int a, unsigned 
 }
 /* compares a node's two children
    returns the right one to potentially swap */
-static __inline unsigned int s_child_cmp(struct heap * heap, unsigned int a)
+static __inline size_t s_child_cmp(struct heap * heap, size_t a)
 {
-	unsigned int b = a;
-	unsigned int left = lc(a);
-	unsigned int right = rc(a);
+	size_t b = a;
+	size_t left = lc(a);
+	size_t right = rc(a);
 	if(s_cmp(heap, left, b)) b = left;
 	if(s_cmp(heap, right, b)) b = right;
 	return b;
 }
 /* swaps two elements */
-static __inline unsigned int swap(unsigned int a, unsigned int b, struct heap * heap)
+static __inline size_t swap(size_t a, size_t b, struct heap * heap)
 {
 	void * tmp = heap->array[a];
 	heap->array[a] = heap->array[b];
@@ -78,9 +78,9 @@ static __inline unsigned int swap(unsigned int a, unsigned int b, struct heap * 
 }
 /* restores the heap properties
    returns the inserted element's index */
-static __inline unsigned int heapify(unsigned int ud, unsigned int index, struct heap * heap)
+static __inline size_t heapify(size_t ud, size_t index, struct heap * heap)
 {
-	unsigned int a = index, b = 0;
+	size_t a = index, b = 0;
 	if(ud)
 	{
 		for(; a != (b = s_child_cmp(heap, a)); a = b)
@@ -99,11 +99,12 @@ static __inline unsigned int heapify(unsigned int ud, unsigned int index, struct
 }
 
 /* returns 0 on failure and 1 on success */
-unsigned int heap_insert(struct heap * heap, void * value)
+size_t heap_insert(struct heap * heap, void * value)
 {
-	unsigned int size = heap->size;
-	unsigned int max_size = heap->max_size;
-	if(NULL == heap || NULL == heap->array || NULL == value || size == max_size)
+	size_t size = heap->size;
+	size_t max_size = heap->max_size;
+	if(NULL == heap || NULL == heap->array
+			|| NULL == value || size == max_size)
 	{
 		return 0;
 	}
@@ -123,7 +124,7 @@ unsigned int heap_insert(struct heap * heap, void * value)
 }
 void * heap_remove(struct heap * heap)
 {
-	unsigned int size = heap->size;
+	size_t size = heap->size;
 	if(NULL == heap || NULL == heap->array || 0 == size)
 	{
 		return NULL;
@@ -143,18 +144,18 @@ void * heap_peek(const struct heap * heap)
 	return (NULL != heap->array) ? heap->array[0] : NULL;
 }
 
-unsigned int heap_destruction(unsigned int v, struct heap * heap)
+size_t heap_destruction(size_t v, struct heap * heap)
 {
 	if(NULL == heap)
 	{
 		return 0;
 	}
-	unsigned int size = heap->size;
+	size_t size = heap->size;
 	if(NULL != heap->array)
 	{
 		if(v)
 		{
-			for(unsigned int i = 0; i < size; i++)
+			for(size_t i = 0; i < size; i++)
 			{
 				if(NULL != heap->array[i]) free(heap->array[i]);
 			}

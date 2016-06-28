@@ -7,7 +7,7 @@ use feature 'say';
 # TEST VARIABLES
 my $program = "./test ";
 my $file = "test_input";
-my $node_limit = 199999;
+my $node_limit = 9999999;
 my $key_limit = 10000;
 my $err = 0;
 

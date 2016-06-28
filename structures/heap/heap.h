@@ -30,25 +30,25 @@
 
 struct heap {
 	void ** array;
-	unsigned int size;
-	unsigned int max_size;
-	unsigned int (* cmp)(const void * a, const void * b);
-	unsigned int (* growth_rate)(const unsigned int size);
+	size_t size;
+	size_t max_size;
+	size_t (* cmp)(const void * a, const void * b);
+	size_t (* growth_rate)(const size_t size);
 };
 
 /* creates a new heap */
-struct heap * new_heap(unsigned int initial_size,
-	unsigned int (* cmp)(const void * a, const void * b),
-	unsigned int (* growth_rate)(const unsigned int size));
+struct heap * new_heap(size_t initial_size,
+	size_t (* cmp)(const void * a, const void * b),
+	size_t (* growth_rate)(const size_t size));
 /* inserts a new element */
 /* returns 1 on success 0 on failure */
-unsigned int heap_insert(struct heap * heap, void * value);
+size_t heap_insert(struct heap * heap, void * value);
 /* peek at first element */
 void * heap_peek(const struct heap * heap);
 /* deletes the first element and returns it's value */
 void * heap_remove(struct heap * heap);
 /* heap removal util */
 /* returns 1 on success 0 on failure */
-unsigned int heap_destruction(unsigned int v, struct heap * heap);
+size_t heap_destruction(size_t v, struct heap * heap);
 
 #endif /* HEAP */
